@@ -42,7 +42,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -3136,9 +3136,9 @@ TextureImporter:
       ALL_DECORATIONS_44: 376413317
       ALL_DECORATIONS_80: -747384849
       ALL_DECORATIONS_51: -899565437
-      ALL_DECORATIONS_16: -1252095016
-      ALL_DECORATIONS_26: 1986110616
       ALL_DECORATIONS_103: -719467400
+      ALL_DECORATIONS_26: 1986110616
+      ALL_DECORATIONS_16: -1252095016
       ALL_DECORATIONS_7: -1551513587
       ALL_DECORATIONS_13: -1627353101
       ALL_DECORATIONS_110: 489731493
