@@ -61,6 +61,9 @@ public class PlayerMovement : MonoBehaviour
     public float min;
     public float sec;
 
+    [Header("Easy Mode")]
+    public Vector3 lastSafePosition;
+
     public void Start()
     {
         // ignore collisions with parts
@@ -119,22 +122,22 @@ public class PlayerMovement : MonoBehaviour
             if (horizontalInput > 0) // rotate right
             {
                 rb.angularVelocity = 0;
-                rb.AddTorque(-groundRotationSpeed);
+                rb.AddTorque(-groundRotationSpeed * Time.deltaTime);
             }
             else if (horizontalInput < 0) // rotate left
             {
                 rb.angularVelocity = 0;
-                rb.AddTorque(groundRotationSpeed);
+                rb.AddTorque(groundRotationSpeed * Time.deltaTime);
             }
             else // rotate back to the center
             {
                 if (transform.rotation.eulerAngles.z > 0 && transform.rotation.eulerAngles.z < 180)
                 {
-                    rb.AddTorque(correctionRotationSpeed);
+                    rb.AddTorque(correctionRotationSpeed * Time.deltaTime);
                 }
                 else
                 {
-                    rb.AddTorque(-correctionRotationSpeed);
+                    rb.AddTorque(-correctionRotationSpeed * Time.deltaTime);
                 }
             }
         }
@@ -144,12 +147,12 @@ public class PlayerMovement : MonoBehaviour
             if (horizontalInput > 0) // rotate right
             {
                 rb.angularVelocity = 0;
-                rb.AddTorque(-airRotationSpeed);
+                rb.AddTorque(-airRotationSpeed * Time.deltaTime);
             }
             else if (horizontalInput < 0) // rotate left
             {
                 rb.angularVelocity = 0;
-                rb.AddTorque(airRotationSpeed);
+                rb.AddTorque(airRotationSpeed * Time.deltaTime);
             }
         }
 
@@ -214,10 +217,13 @@ public class PlayerMovement : MonoBehaviour
         if (other.gameObject.CompareTag("Ground")) // check for ground
         {
             if (Grounded())
-                {
-                    rb.angularVelocity = 0; // reset rotations
-                    rb.velocity = Vector2.zero;
-                }
+            {
+                rb.angularVelocity = 0; // reset rotations
+                rb.velocity = Vector2.zero;
+
+                // save this as the last safe position
+                lastSafePosition = transform.position;
+            }
             else
             {
                 // bounce
@@ -302,7 +308,10 @@ public class PlayerMovement : MonoBehaviour
         rb.angularVelocity = 0;
         rb.velocity = Vector2.zero;
         transform.rotation = Quaternion.identity;
-        transform.position = spawnPoint.transform.position;
+        if (data.easyMode)
+            transform.position = lastSafePosition;
+        else
+            transform.position = spawnPoint.transform.position;
         dead = false;
     }
 }

@@ -23,4 +23,7 @@ public class GameData : ScriptableObject
     public float hou;
     public float min;
     public float sec;
+
+    // easy mode
+    public bool easyMode;
 }
