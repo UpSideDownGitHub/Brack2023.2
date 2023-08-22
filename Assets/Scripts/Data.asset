@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 397191a7f49953b4286e59396e9aae78, type: 3}
   m_Name: Data
   m_EditorClassIdentifier: 
-  totalCoins: 18
+  totalCoins: 75
   currentCollectedCoins: 0
   currentDeaths: 0
-  bestDepth: 11.557707
-  currentDepth: 11.557707
-  maxDepth: 240
+  bestDepth: 403.4898
+  currentDepth: 403.4898
+  maxDepth: 1000
   minDepth: 0
   hou: 0
-  min: 0
-  sec: 6
+  min: 2
+  sec: 37
