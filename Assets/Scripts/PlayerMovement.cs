@@ -68,6 +68,9 @@ public class PlayerMovement : MonoBehaviour
     public float spawnTime = 0.1f;
     private float _timeOfLastSpawn;
 
+    [Header("End of the Game")]
+    public GameObject endScreen;
+
     public void Start()
     {
         // ignore collisions with parts
@@ -108,7 +111,7 @@ public class PlayerMovement : MonoBehaviour
                 previousPositionsFAKE[i] = Vector3.zero;
         }
 
-        if (data.easyMode)
+        if (data.easyMode && Time.timeScale != 0)
         {
             if (Input.GetKeyDown(KeyCode.Z))
             {
@@ -120,7 +123,7 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
-        if (dead)
+        if (dead || Time.timeScale == 0)
             return;
         
 
@@ -197,7 +200,7 @@ public class PlayerMovement : MonoBehaviour
 
     void LateUpdate()
     {
-        if (dead)
+        if (dead || Time.timeScale == 0)
             return;
 
         // fill the slider to show the current fill rate
@@ -235,7 +238,7 @@ public class PlayerMovement : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D other)
     {
-        if (dead)
+        if (dead || Time.timeScale == 0)
             return;
 
         if (other.gameObject.CompareTag("Death")) // check for death
@@ -296,7 +299,13 @@ public class PlayerMovement : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Coin"))
+        if (other.CompareTag("End"))
+        {
+            // end the game
+            Time.timeScale = 0f;
+            endScreen.SetActive(true);
+        }
+        else if (other.CompareTag("Coin"))
         {
             Destroy(other.gameObject);
             currentCoins++;
@@ -334,7 +343,7 @@ public class PlayerMovement : MonoBehaviour
     }
     public Vector3? getSafePosition()
     {
-        if (previousPositions[0] == null)
+        if (previousPositions[0] == null || previousPositions[0] == Vector3.zero)
             return null;
         Vector3? firstItem = previousPositions[0];
         for (int i = 0; i < previousPositions.Length - 1; i++)
@@ -349,6 +358,7 @@ public class PlayerMovement : MonoBehaviour
     {
         // deaths text
         currentDeaths++;
+        data.currentDeaths++;
         deathsText.text = currentDeaths.ToString();
 
         dead = true;

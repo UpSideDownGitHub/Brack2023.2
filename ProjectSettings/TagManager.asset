@@ -10,6 +10,7 @@ TagManager:
   - DeadPlayer
   - Coin
   - CheckPoint
+  - End
   layers:
   - Default
   - TransparentFX
