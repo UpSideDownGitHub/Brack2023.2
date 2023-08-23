@@ -15,11 +15,11 @@ MonoBehaviour:
   totalCoins: 75
   currentCollectedCoins: 0
   currentDeaths: 0
-  bestDepth: 403.4898
-  currentDepth: 403.4898
+  bestDepth: 0
+  currentDepth: 0
   maxDepth: 1000
   minDepth: 0
   hou: 0
-  min: 2
-  sec: 37
-  easyMode: 1
+  min: 0
+  sec: 10
+  easyMode: 0

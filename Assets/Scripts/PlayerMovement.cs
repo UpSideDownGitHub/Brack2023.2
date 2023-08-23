@@ -111,21 +111,30 @@ public class PlayerMovement : MonoBehaviour
                 previousPositionsFAKE[i] = Vector3.zero;
         }
 
-        if (data.easyMode && Time.timeScale != 0)
+
+        if (Input.GetKeyDown(KeyCode.Z))
         {
-            if (Input.GetKeyDown(KeyCode.Z))
+            if (Time.timeScale != 0)
             {
-                StopCoroutine("respawn");
-                Vector3? tempPosition = getSafePosition();
-                if (tempPosition != null)
-                    lastSafePosition = tempPosition.Value;
-                StartCoroutine(respawn());
+                if (data.easyMode)
+                {
+                    StopCoroutine("respawn");
+                    Vector3? tempPosition = getSafePosition();
+                    if (tempPosition != null)
+                        lastSafePosition = tempPosition.Value;
+                    StartCoroutine(respawn());
+                }
+                else
+                {
+                    StopCoroutine("respawn");
+                    StartCoroutine(respawn());
+                }
             }
         }
 
         if (dead || Time.timeScale == 0)
             return;
-        
+
 
         // jumping 
         if (Input.GetKeyDown(KeyCode.Space) && Grounded())
