@@ -1,5 +1,8 @@
+//#define DELETEPLAYERPREFS
+
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -14,15 +17,46 @@ public class MainMenu : MonoBehaviour
     public bool easyMode;
     private bool easyModeEnabled = false;
 
+    [Header("Best Time")]
+    public TMP_Text timeText;
+    public TMP_Text coinsText;
+    public TMP_Text deathsText;
+    public TMP_Text bestTimeTitle;
+
     public GameData data;
 
     void Start()
     {
+#if DELETEPLAYERPREFS
+        PlayerPrefs.DeleteAll();
+#endif
         easyModeEnabled = data.easyMode;
         if (easyModeEnabled)
+        {
             easyModeText.text = "Enabled";
+            bestTimeTitle.text = "Best Time (Easy)";
+            var hou = PlayerPrefs.GetFloat("E_timeHou", 99);
+            var min = PlayerPrefs.GetFloat("E_timeMin", 99);
+            var sec = PlayerPrefs.GetFloat("E_timeSec", 99);
+            var coin = PlayerPrefs.GetInt("E_coins", 0);
+            var death = PlayerPrefs.GetInt("E_deaths", 0);
+            timeText.text = string.Format("{0:00}:{1:00}:{2:00}", hou, min, sec);
+            coinsText.text = coin + "/" + data.totalCoins;
+            deathsText.text = death.ToString();
+        }
         else
+        {
             easyModeText.text = "Disabled";
+            bestTimeTitle.text = "Best Time";
+            var hou = PlayerPrefs.GetFloat("timeHou", 99);
+            var min = PlayerPrefs.GetFloat("timeMin", 99);
+            var sec = PlayerPrefs.GetFloat("timeSec", 99);
+            var coin = PlayerPrefs.GetInt("coins", 0);
+            var death = PlayerPrefs.GetInt("deaths", 0);
+            timeText.text = string.Format("{0:00}:{1:00}:{2:00}", hou, min, sec);
+            coinsText.text = coin + "/" + data.totalCoins;
+            deathsText.text = death.ToString();
+        }
 
     }
 
@@ -67,9 +101,31 @@ public class MainMenu : MonoBehaviour
                 easyModeEnabled = !easyModeEnabled;
                 data.easyMode = easyModeEnabled;
                 if (easyModeEnabled)
+                {
                     easyModeText.text = "Enabled";
+                    bestTimeTitle.text = "Best Time (Easy)";
+                    var hou = PlayerPrefs.GetFloat("E_timeHou", 0);
+                    var min = PlayerPrefs.GetFloat("E_timeMin", 0);
+                    var sec = PlayerPrefs.GetFloat("E_timeSec", 0);
+                    var coin = PlayerPrefs.GetInt("E_coins", 0);
+                    var death = PlayerPrefs.GetInt("E_deaths", 0);
+                    timeText.text = string.Format("{0:00}:{1:00}:{2:00}", hou, min, sec);
+                    coinsText.text = coin + "/" + data.totalCoins;
+                    deathsText.text = death.ToString();
+                }
                 else
+                {
                     easyModeText.text = "Disabled";
+                    bestTimeTitle.text = "Best Time";
+                    var hou = PlayerPrefs.GetFloat("timeHou", 0);
+                    var min = PlayerPrefs.GetFloat("timeMin", 0);
+                    var sec = PlayerPrefs.GetFloat("timeSec", 0);
+                    var coin = PlayerPrefs.GetInt("coins", 0);
+                    var death = PlayerPrefs.GetInt("deaths", 0);
+                    timeText.text = string.Format("{0:00}:{1:00}:{2:00}", hou, min, sec);
+                    coinsText.text = coin + "/" + data.totalCoins;
+                    deathsText.text = death.ToString();
+                }
             }
             else if (start)
                 SceneManager.LoadSceneAsync(1);

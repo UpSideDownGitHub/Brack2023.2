@@ -31,32 +31,65 @@ public class EndScreen : MonoBehaviour
 
     public bool saveData()
     {
-        if (PlayerPrefs.GetFloat("timeHou", 999) > data.hou)
+        if (data.easyMode)
         {
-            SaveNewScore();
-            return true;
+            if (PlayerPrefs.GetFloat("E_timeHou", 999) > data.hou)
+            {
+                SaveNewScore();
+                return true;
+            }
+            else if (PlayerPrefs.GetFloat("E_timeMin", 999) > data.min)
+            {
+                SaveNewScore();
+                return true;
+            }
+            else if (PlayerPrefs.GetFloat("E_timeSec", 999) > data.sec)
+            {
+                SaveNewScore();
+                return true;
+            }
         }
-        else if (PlayerPrefs.GetFloat("timeMin", 999) > data.min)
+        else
         {
-            SaveNewScore();
-            return true;
-        }
-        else if (PlayerPrefs.GetFloat("timeSec", 999) > data.sec)
-        {
-            SaveNewScore();
-            return true;
+            if (PlayerPrefs.GetFloat("timeHou", 999) > data.hou)
+            {
+                SaveNewScore();
+                return true;
+            }
+            else if (PlayerPrefs.GetFloat("timeMin", 999) > data.min)
+            {
+                SaveNewScore();
+                return true;
+            }
+            else if (PlayerPrefs.GetFloat("timeSec", 999) > data.sec)
+            {
+                SaveNewScore();
+                return true;
+            }
         }
         return false;
     }
 
     public void SaveNewScore()
     {
-        PlayerPrefs.SetFloat("timeHou", data.hou);
-        PlayerPrefs.SetFloat("timeMin", data.min);
-        PlayerPrefs.SetFloat("timeSec", data.sec);
-        PlayerPrefs.SetInt("coins", data.currentCollectedCoins);
-        PlayerPrefs.SetInt("deaths", data.currentDeaths);
-        PlayerPrefs.Save();
+        if (data.easyMode)
+        {
+            PlayerPrefs.SetFloat("E_timeHou", data.hou);
+            PlayerPrefs.SetFloat("E_timeMin", data.min);
+            PlayerPrefs.SetFloat("E_timeSec", data.sec);
+            PlayerPrefs.SetInt("E_coins", data.currentCollectedCoins);
+            PlayerPrefs.SetInt("E_deaths", data.currentDeaths);
+            PlayerPrefs.Save();
+        }
+        else
+        {
+            PlayerPrefs.SetFloat("timeHou", data.hou);
+            PlayerPrefs.SetFloat("timeMin", data.min);
+            PlayerPrefs.SetFloat("timeSec", data.sec);
+            PlayerPrefs.SetInt("coins", data.currentCollectedCoins);
+            PlayerPrefs.SetInt("deaths", data.currentDeaths);
+            PlayerPrefs.Save();
+        }
     }
 
     // Update is called once per frame

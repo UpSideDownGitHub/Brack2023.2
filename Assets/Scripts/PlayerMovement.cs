@@ -318,6 +318,7 @@ public class PlayerMovement : MonoBehaviour
         {
             Destroy(other.gameObject);
             currentCoins++;
+            data.currentCollectedCoins++;
             coinsText.text = currentCoins + "/" + data.totalCoins;
         }
         else if (other.CompareTag("CheckPoint"))
