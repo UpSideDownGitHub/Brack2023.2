@@ -63,11 +63,17 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Easy Mode")]
     public Vector3 lastSafePosition;
+    public Vector3?[] previousPositions = new Vector3?[3];
+    public Vector3[] previousPositionsFAKE;
+    public float spawnTime = 0.1f;
+    private float _timeOfLastSpawn;
 
     public void Start()
     {
         // ignore collisions with parts
-        Physics2D.IgnoreLayerCollision(7, 8);
+        Physics2D.IgnoreLayerCollision(7, 8); // player & parts
+        Physics2D.IgnoreLayerCollision(8, 9); // parts & hazards
+        Physics2D.IgnoreLayerCollision(8, 8); // parts & parts
         // timer
         startTime = Time.time;
 
@@ -94,8 +100,29 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        for (int i = 0; i < previousPositions.Length; i++)
+        {
+            if (previousPositions[i] != null)
+                previousPositionsFAKE[i] = previousPositions[i].Value;
+            else
+                previousPositionsFAKE[i] = Vector3.zero;
+        }
+
+        if (data.easyMode)
+        {
+            if (Input.GetKeyDown(KeyCode.Z))
+            {
+                StopCoroutine("respawn");
+                Vector3? tempPosition = getSafePosition();
+                if (tempPosition != null)
+                    lastSafePosition = tempPosition.Value;
+                StartCoroutine(respawn());
+            }
+        }
+
         if (dead)
             return;
+        
 
         // jumping 
         if (Input.GetKeyDown(KeyCode.Space) && Grounded())
@@ -104,7 +131,7 @@ public class PlayerMovement : MonoBehaviour
             chargeUI.SetActive(true);
             jumpStartTime = Time.time;
         }
-        if (Input.GetKeyUp(KeyCode.Space) && Grounded())
+        if (Input.GetKeyUp(KeyCode.Space) && Grounded() && chargingJump)
         {
             chargingJump = false;
             chargeUI.SetActive(false);
@@ -198,7 +225,8 @@ public class PlayerMovement : MonoBehaviour
             // Check if the angle is greater than or equal to the required rotation
             if (angle > maxAngle)
             {
-                StartCoroutine(respawn());
+                if (!dead)
+                    StartCoroutine(respawn());
             }
         }
 
@@ -212,7 +240,8 @@ public class PlayerMovement : MonoBehaviour
 
         if (other.gameObject.CompareTag("Death")) // check for death
         {
-            StartCoroutine(respawn());
+            if (!dead)
+                StartCoroutine(respawn());
         }
         if (other.gameObject.CompareTag("Ground")) // check for ground
         {
@@ -221,13 +250,25 @@ public class PlayerMovement : MonoBehaviour
                 rb.angularVelocity = 0; // reset rotations
                 rb.velocity = Vector2.zero;
 
-                // save this as the last safe position
-                lastSafePosition = transform.position;
+                if (Time.time > spawnTime + _timeOfLastSpawn)
+                {
+                    // save the last safe position
+                    addSafePosition(lastSafePosition);
+                    // set the new last safe position
+                    lastSafePosition = transform.position;
+                }
             }
             else
             {
+                // reset the angular velocity to stop the player from spinning loads
+                rb.angularVelocity = 0;
+
                 // bounce
-                rb.velocity = new Vector2(-velocityCopy.x, rb.velocity.y);
+                float angle = Quaternion.Angle(transform.rotation, Quaternion.FromToRotation(Vector2.up, other.contacts[0].normal));
+                if (angle >= 180) // hit the ceiling
+                    rb.velocity = new Vector2(velocityCopy.x, -rb.velocity.y);
+                else // hit a wall
+                    rb.velocity = new Vector2(-velocityCopy.x, rb.velocity.y);
             }
         }
 
@@ -241,12 +282,14 @@ public class PlayerMovement : MonoBehaviour
                 print(angle);
                 if (angle < maxAngle)
                 {
-                    StartCoroutine(respawn());
+                    if (!dead)
+                        StartCoroutine(respawn());
                 }
             }
             else if (angle > maxAngle)
             {
-                StartCoroutine(respawn());
+                if (!dead)
+                    StartCoroutine(respawn());
             }
         }
     }
@@ -280,6 +323,28 @@ public class PlayerMovement : MonoBehaviour
         return false;
     }
 
+    public void addSafePosition(Vector3 newPosition)
+    {
+        // move all items forward one position
+        for (int i = previousPositions.Length - 2; i >= 0; i--)
+        {
+            previousPositions[i + 1] = previousPositions[i];
+        }
+        previousPositions[0] = newPosition;
+    }
+    public Vector3? getSafePosition()
+    {
+        if (previousPositions[0] == null)
+            return null;
+        Vector3? firstItem = previousPositions[0];
+        for (int i = 0; i < previousPositions.Length - 1; i++)
+        {
+            previousPositions[i] = previousPositions[i + 1];
+        }
+        previousPositions[previousPositions.Length - 1] = null;
+        return firstItem;
+    }
+
     public IEnumerator respawn()
     {
         // deaths text
@@ -293,7 +358,11 @@ public class PlayerMovement : MonoBehaviour
         chargingJump = false;
 
         // Spawn a particle effect
+
         for (int i = 0; i < renderers.Length; i++) { renderers[i].enabled = false; }
+        // stop dead player from moving
+        rb.angularVelocity = 0;
+        rb.velocity = Vector2.zero;
         for (int i = 0; i < parts.Length; i++)
         {
             var temp = Instantiate(parts[i], transform.position, Quaternion.identity);
@@ -312,6 +381,8 @@ public class PlayerMovement : MonoBehaviour
             transform.position = lastSafePosition;
         else
             transform.position = spawnPoint.transform.position;
+        chargingJump = false;
         dead = false;
+        _timeOfLastSpawn = Time.time;
     }
 }

@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 4012494149085187522}
   - component: {fileID: -6684453066426049514}
   - component: {fileID: 8528245123019725977}
+  - component: {fileID: -4695607051861760422}
   m_Layer: 8
   m_Name: Bounce_Mushroom_Animation_0
   m_TagString: DeadPlayer
@@ -123,3 +124,17 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.5
+--- !u!114 &-4695607051861760422
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8002412177119371292}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d78e3315c7c4cc48992953c6f83dd42, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  LerpTime: 0.3
+  destroyTime: 6
