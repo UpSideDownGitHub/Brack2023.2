@@ -71,6 +71,20 @@ public class PlayerMovement : MonoBehaviour
     [Header("End of the Game")]
     public GameObject endScreen;
 
+    [Header("Music & SFX")]
+    public AudioSource source;
+    public AudioClip jumpSFX;
+    public AudioClip wallBounceSFX;
+    public AudioClip landSFX;
+    public AudioClip flagHitSFX;
+    public AudioClip coinCollectedSFX;
+    public AudioClip headDeathSFX;
+    public AudioClip respawnSFX;
+    public AudioClip victorySFX;
+
+    public int currentCheckpoint;
+    public MusicManager music;
+
     public void Start()
     {
         // ignore collisions with parts
@@ -118,6 +132,7 @@ public class PlayerMovement : MonoBehaviour
             {
                 if (data.easyMode)
                 {
+                    source.PlayOneShot(respawnSFX);
                     StopCoroutine("respawn");
                     Vector3? tempPosition = getSafePosition();
                     if (tempPosition != null)
@@ -126,6 +141,7 @@ public class PlayerMovement : MonoBehaviour
                 }
                 else
                 {
+                    source.PlayOneShot(respawnSFX);
                     StopCoroutine("respawn");
                     StartCoroutine(respawn());
                 }
@@ -145,6 +161,8 @@ public class PlayerMovement : MonoBehaviour
         }
         if (Input.GetKeyUp(KeyCode.Space) && Grounded() && chargingJump)
         {
+            source.PlayOneShot(jumpSFX);
+
             chargingJump = false;
             chargeUI.SetActive(false);
             chargeSlider.value = chargeSlider.minValue;
@@ -238,7 +256,10 @@ public class PlayerMovement : MonoBehaviour
             if (angle > maxAngle)
             {
                 if (!dead)
+                {
+                    source.PlayOneShot(headDeathSFX);
                     StartCoroutine(respawn());
+                }
             }
         }
 
@@ -252,13 +273,18 @@ public class PlayerMovement : MonoBehaviour
 
         if (other.gameObject.CompareTag("Death")) // check for death
         {
+
             if (!dead)
+            {
+                source.PlayOneShot(headDeathSFX);
                 StartCoroutine(respawn());
+            }
         }
         if (other.gameObject.CompareTag("Ground")) // check for ground
         {
             if (Grounded())
             {
+                source.PlayOneShot(landSFX);
                 rb.angularVelocity = 0; // reset rotations
                 rb.velocity = Vector2.zero;
 
@@ -274,6 +300,8 @@ public class PlayerMovement : MonoBehaviour
             {
                 // reset the angular velocity to stop the player from spinning loads
                 rb.angularVelocity = 0;
+
+                source.PlayOneShot(wallBounceSFX);
 
                 // bounce
                 float angle = Quaternion.Angle(transform.rotation, Quaternion.FromToRotation(Vector2.up, other.contacts[0].normal));
@@ -291,17 +319,23 @@ public class PlayerMovement : MonoBehaviour
             if (angle >= 180)
             {
                 angle = Quaternion.Angle(transform.rotation, Quaternion.FromToRotation(other.contacts[0].normal, Vector2.down));
-                print(angle);
                 if (angle < maxAngle)
                 {
                     if (!dead)
+                    {
+                        source.PlayOneShot(headDeathSFX);
                         StartCoroutine(respawn());
+                    }
+
                 }
             }
             else if (angle > maxAngle)
             {
                 if (!dead)
+                {
+                    source.PlayOneShot(headDeathSFX);
                     StartCoroutine(respawn());
+                }
             }
         }
     }
@@ -311,11 +345,13 @@ public class PlayerMovement : MonoBehaviour
         if (other.CompareTag("End"))
         {
             // end the game
+            source.PlayOneShot(victorySFX);
             Time.timeScale = 0f;
             endScreen.SetActive(true);
         }
         else if (other.CompareTag("Coin"))
         {
+            source.PlayOneShot(coinCollectedSFX);
             Destroy(other.gameObject);
             currentCoins++;
             data.currentCollectedCoins++;
@@ -324,6 +360,13 @@ public class PlayerMovement : MonoBehaviour
         else if (other.CompareTag("CheckPoint"))
         {
             spawnPoint = other.gameObject;
+            // change the music to match the current checkpoint
+            currentCheckpoint++;
+            source.PlayOneShot(flagHitSFX);
+            if (currentCheckpoint == 4)
+                music.ChangeToIce();
+            else if (currentCheckpoint == 6)
+                music.ChangeToLava();
         }
     }
 

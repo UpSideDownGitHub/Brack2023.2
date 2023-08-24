@@ -13,13 +13,13 @@ MonoBehaviour:
   m_Name: Data
   m_EditorClassIdentifier: 
   totalCoins: 75
-  currentCollectedCoins: 0
-  currentDeaths: 0
-  bestDepth: 0
-  currentDepth: 0
+  currentCollectedCoins: 1
+  currentDeaths: 1
+  bestDepth: 22.508175
+  currentDepth: 6.754966
   maxDepth: 1000
   minDepth: 0
   hou: 0
   min: 0
-  sec: 10
-  easyMode: 0
+  sec: 21
+  easyMode: 1

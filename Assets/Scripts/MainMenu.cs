@@ -3,6 +3,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Mono.CompilerServices.SymbolWriter;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -24,6 +25,9 @@ public class MainMenu : MonoBehaviour
     public TMP_Text bestTimeTitle;
 
     public GameData data;
+
+    public AudioSource source;
+    public AudioClip clickSound;
 
     void Start()
     {
@@ -69,6 +73,7 @@ public class MainMenu : MonoBehaviour
             easyModeText.color = Color.white;
             start = true;
             easyMode = false;
+            source.PlayOneShot(clickSound);
         }
         else if (Input.GetKeyDown(KeyCode.DownArrow)) // Exit
         {
@@ -77,6 +82,7 @@ public class MainMenu : MonoBehaviour
             easyModeText.color = Color.white;
             start = false;
             easyMode = false;
+            source.PlayOneShot(clickSound);
         }
         else if (Input.GetKeyDown(KeyCode.LeftArrow)) // Start
         {
@@ -85,6 +91,7 @@ public class MainMenu : MonoBehaviour
             easyModeText.color = Color.white;
             start = true;
             easyMode = false;
+            source.PlayOneShot(clickSound);
         }
         else if (Input.GetKeyDown(KeyCode.RightArrow)) // Easy Mode
         {
@@ -92,10 +99,12 @@ public class MainMenu : MonoBehaviour
             exitIcon.SetActive(false);
             easyModeText.color = Color.red;
             easyMode = true;
+            source.PlayOneShot(clickSound);
         }
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
+            source.PlayOneShot(clickSound);
             if (easyMode)
             {
                 easyModeEnabled = !easyModeEnabled;
