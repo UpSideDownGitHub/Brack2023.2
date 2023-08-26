@@ -137,7 +137,10 @@ public class MainMenu : MonoBehaviour
                 }
             }
             else if (start)
-                SceneManager.LoadSceneAsync(1);
+                {
+                    gameObject.SetActive(false);
+                    SceneManager.LoadSceneAsync(1);
+                }
             else
                 Application.Quit();
         }
